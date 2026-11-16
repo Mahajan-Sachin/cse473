@@ -157,21 +157,26 @@ Open your browser at **`http://localhost:5173`**.
 
 ---
 
-## 🎓 Viva & Presentation Defense Guide (Key Technical Questions)
+## 🔬 Engineering & Design Methodology
 
-| Question Examiner Might Ask | Technical Answer to Give |
-| :--- | :--- |
-| **Why not just use standard ChatGPT?** | General LLMs are one-size-fits-all and hallucinate outside their training distribution. EduPath uses **few-shot pedagogical exemplars** to enforce 3 calibrated cognitive tiers, grounds factual statements directly in official **NCERT curriculum**, and tracks student misconceptions across turns via **LangGraph**. |
-| **Why did you switch to NCERT over OpenStax?** | For Indian education and university evaluation, NCERT is the national gold standard across CBSE, State Boards, JEE, and NEET. Grounding in NCERT ensures SI unit consistency, standard Indian textbook definitions, and relatable citations for Indian students and evaluators. |
-| **Why LangGraph over basic LangChain chains?** | LangChain chains are unidirectional DAGs. LangGraph provides an explicit cyclic state machine (`TutorState`) with sequential nodes (`Assess` ➔ `Retrieve` ➔ `Generate`), enabling persistent misconception tracking and dynamic adaptation based on conversational memory. |
-| **Why RecursiveCharacterTextSplitter?** | Naive character splitting cuts words or formulas in half. `RecursiveCharacterTextSplitter` respects natural grammatical boundaries hierarchically (paragraphs `\n\n` $\to$ lines `\n` $\to$ sentences `. ` $\to$ words), preserving complete semantic thoughts for dense neural encoding. |
-| **How does misconception remediation work?** | In the `Assess` node, a fast LLM pass scans the student's question against common pedagogical misconceptions. If detected, the fallacy is logged to `detected_misconceptions` and injected into the prompt so the tutor directly unteaches the error. |
-| **Why FastAPI + React instead of Streamlit?** | Streamlit re-runs the entire Python script on every user interaction, causing screen flashes, cold starts, and poor layout control. Our decoupled architecture pairs a high-performance **FastAPI backend** (concurrent 3-level generation) with a modern **React 19 single-page canvas** featuring instant zero-latency pill switching and native KaTeX rendering. |
-| **How does Fallback Mode prevent hallucination?** | We enforce a cosine similarity threshold of $0.32$. If a query falls outside the indexed NCERT syllabus, the system transparently flags `is_fallback = True` and signals this to the student, ensuring no ungrounded claims are disguised as textbook facts. |
+### 1. Pedagogical Calibration via Few-Shot In-Context Learning
+Unlike generic conversational LLMs that produce one-size-fits-all answers, EduPath enforces strict pedagogical calibration across three distinct cognitive tiers (`Foundational`, `Conceptual`, and `Socratic`). Few-shot exemplars dynamically dictate explanation depth, vocabulary, and questioning style to cater to varied learner proficiencies.
+
+### 2. State-Driven Misconception Diagnosis
+Using LangGraph's state machine architecture (`TutorState`), EduPath models a sequential loop (`Assess` ➔ `Retrieve` ➔ `Generate`). During the assessment phase, student queries are diagnosed for underlying conceptual fallacies, which are persisted into a session-level state list (`detected_misconceptions`) to guide subsequent remediation.
+
+### 3. Curriculum-Aligned Neural RAG
+The knowledge base is strictly aligned with the official NCERT STEM curriculum (Classes 11 & 12). Raw textbook streams are partitioned using LangChain's `RecursiveCharacterTextSplitter` across natural grammatical boundaries (`\n\n`, `\n`, `. `, ` `) to prevent formula truncation. Chunks are encoded into 384-dimensional dense vectors via `sentence-transformers/all-MiniLM-L6-v2` and indexed within a persistent ChromaDB vector store using HNSW Cosine Distance.
+
+### 4. Hallucination Safeguards & Confidence Thresholding
+To ensure high factual fidelity, a cosine similarity threshold ($\tau = 0.32$) gates retrieval. Out-of-syllabus inquiries trigger a transparent **Autonomous Fallback Mode**, ensuring that unsupported claims are never falsely attributed to textbook citations.
+
+### 5. Decoupled Full-Stack Architecture
+EduPath separates a high-throughput **FastAPI backend** from an interactive **React 19 single-page canvas**. The backend leverages concurrent thread pooling to synthesize all three pedagogical levels simultaneously, enabling zero-latency level toggling with hardware-accelerated KaTeX mathematical rendering.
 
 ---
 
-## 📜 Course & Competition Credentials
-* **Project:** EduPath — Personalized Tutoring Agent
+## 📜 Project Metadata
+* **Project Name:** EduPath — Personalized AI Tutoring Agent
 * **Course:** CSE 473 — Artificial Intelligence
-* **Theme:** Google Solution Challenge | UN Sustainable Development Goal 4 (Quality Education)
+* **Initiative:** UN Sustainable Development Goal 4 (Quality Education) | Google Solution Challenge
