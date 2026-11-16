@@ -1,90 +1,177 @@
-# 🎓 EduPath — Personalized Tutoring Agent
+# 🎓 EduPath — Personalized AI Tutoring Agent
 > **Google Solution Challenge — UN SDG 4: Quality Education**  
-> **Course:** CSE 473 (Artificial Intelligence)
+> **Course:** CSE 473 (Artificial Intelligence)  
+> **Knowledge Base:** Official NCERT STEM Curriculum (Classes 11 & 12: Physics, Chemistry, Mathematics)
 
 ---
 
 ## 📌 Project Overview
-In underserved and resource-constrained schools, high student-to-teacher ratios (often 40:1 or worse) prevent educators from diagnosing individual student misconceptions or pacing instruction. 
+In resource-constrained and underserved educational systems, high student-to-teacher ratios (frequently exceeding 40:1) make it nearly impossible for instructors to detect individual conceptual misunderstandings, track learning plateaus, or adapt teaching style to each student's pace.
 
-**EduPath** is a stateful AI tutoring agent built with **LangGraph**, **Groq LLM (`openai/gpt-oss-120b`)**, and **official NCERT Class 11 & 12 Textbooks**. It dynamically diagnoses student misunderstandings and adapts its pedagogical explanation style across **3 difficulty levels** using **few-shot in-context learning**.
+**EduPath** is an adaptive, stateful AI tutoring agent built with **LangGraph**, **Groq LLM (`openai/gpt-oss-120b`)**, and **persistent ChromaDB vector indexing**. Grounded in official **NCERT Class 11 & 12 STEM textbooks**, EduPath dynamically diagnoses student misconceptions, tracks them across conversational state, and generates answers calibrated across **3 pedagogical cognitive levels** using **few-shot in-context learning**.
 
 ---
 
 ## 🚀 Key Features & AI Innovations
 
-### 1. ChatGPT-Style Dynamic Level Switcher (The Innovation)
-- **Zero-Cramping Single Stream**: Answers appear in a clean, full-width Notion/Linear style chat canvas.
-- **Instant Level Pills**: Every assistant message features `[🌱 Foundational]`, `[📘 Conceptual]`, and `[🧠 Socratic]` toggle pills.
-- **Zero-Latency Switching**: Clicking any pill switches the explanation instantly between levels without re-generating or page refreshing.
-- **Preference Memory**: When a student chooses Level 2, future answers automatically adapt to Level 2 as the preferred default.
-- **Crisp LaTeX Math Rendering**: Built with `rehype-katex` so formulas ($\frac{\Delta v}{\Delta t}, F=ma$) render in beautiful, textbook-quality math typography.
+### 1. ChatGPT-Style Dynamic Level Toggle (Interactive UI)
+- **Zero-Cramping Canvas:** Single-stream conversational interface designed with a clean, distraction-free aesthetic (inspired by Notion & Linear).
+- **Instant Level Pills on Every Message:** Every tutor response features intuitive toggle pills:
+  - `[🌱 Foundational]`
+  - `[📘 Conceptual]`
+  - `[🧠 Socratic]`
+- **Zero-Latency Instant Switching:** The FastAPI backend concurrently generates all 3 levels using a thread pool. Students can toggle between explanation depths instantly with zero waiting or regeneration.
+- **Preference Memory:** Choosing a preferred level updates the conversational state, automatically setting that level as the default for follow-up questions.
+- **Crisp KaTeX Math Rendering:** Built with `rehype-katex` and `remark-math` so complex equations ($\vec{F} = m\vec{a}$, $\Delta H = \Delta U + P\Delta V$, $\sigma = \sqrt{\frac{\sum (x-\mu)^2}{N}}$) render in sharp, textbook-grade typography.
 
 ### 2. Multi-Level Pedagogical Adaptation (Core Deliverable)
-- **Level 1 (Foundational / Intuitive):** For struggling or underserved students. Employs vivid everyday physical analogies (e.g., skateboards, ice rinks, debt/allowance) and eliminates intimidating mathematical jargon.
-- **Level 2 (Conceptual & Guided):** Standard Class 11/12 NCERT curriculum level. Structured textbook explanations, standard formulas, and step-by-step problem-solving.
-- **Level 3 (Socratic & Critical Inquiry):** For advanced / competitive exam prep (JEE/NEET). Uses Socratic questioning, boundary-condition tests ("what happens if friction is zero?"), and thought experiments without spoon-feeding answers.
+- **🌱 Level 1 (Foundational & Intuitive):** Built for students struggling with basic concepts. Replaces intimidating mathematical jargon with vivid physical analogies (skateboards, ice rinks, debt/allowance, water pipes) to build visceral intuition.
+- **📘 Level 2 (Conceptual & Guided):** Standard Class 11/12 NCERT textbook depth. Structured step-by-step reasoning, formal SI units, canonical formulas, and worked examples.
+- **🧠 Level 3 (Socratic & Critical Inquiry):** For competitive exam preparation (JEE/NEET). Refuses to spoon-feed answers; challenges the student with counterfactual boundary scenarios (*"What happens to acceleration if friction goes to zero?"*) and guided questioning.
 
-### 3. NCERT Textbook Grounding & Dense Neural RAG
-- Indexed over **1,740+ semantic chunks** from official NCERT Class 11 & 12 textbooks using `RecursiveCharacterTextSplitter`:
-  - ⚛️ *NCERT Physics (Classes XI & XII)* (692 chunks)
-  - 🧪 *NCERT Chemistry (Classes XI & XII)* (684 chunks)
-  - 📐 *NCERT Mathematics (Classes XI & XII)* (364 chunks)
-- **SentenceTransformers (`all-MiniLM-L6-v2`)**: Maps text chunks into a **384-dimensional dense semantic vector space**.
-- Normalized Cosine Distance with verified page citations.
+### 3. NCERT Textbook Grounding & Neural Semantic RAG
+- Indexed over **1,740+ boundary-aware semantic chunks** from official NCERT Class 11 & 12 textbooks:
+  - ⚛️ **NCERT Physics (Classes XI & XII):** Kinematics, Laws of Motion, Work/Energy/Power, Gravitation, Waves & Thermodynamics (692 chunks).
+  - 🧪 **NCERT Chemistry (Classes XI & XII):** Atomic Structure, Chemical Bonding, Thermodynamics, Equilibrium, Organic Chemistry (684 chunks).
+  - 📐 **NCERT Mathematics (Classes XI & XII):** Sets, Relations, Calculus, Coordinate Geometry, Probability & Statistics (364 chunks).
+- **Semantic Text Splitter:** Uses LangChain's `RecursiveCharacterTextSplitter` with hierarchical separators `["\n\n", "\n", ". ", " ", ""]` to ensure chunks never split across mid-sentence or mid-equation boundaries.
+- **Dense Vector Embeddings:** Encoded via `sentence-transformers/all-MiniLM-L6-v2` into a 384-dimensional dense semantic space stored in a persistent **ChromaDB** vector store with HNSW Cosine Distance indexing.
 
-### 4. Similarity Thresholding & Graceful Fallback
-- If cosine similarity $\ge 0.32$: Responses are strictly grounded in NCERT with page citations.
-- If similarity $< 0.32$ (out-of-syllabus query): Transparently activates **Autonomous Fallback Mode** via Groq AI without crashing.
+### 4. Dynamic Misconception Tracking & Remediation
+- An LLM assessment sub-routine analyzes every student prompt for ingrained conceptual errors (e.g., *"heavier objects fall faster in a vacuum"*, *"gravity is an acceleration, not a force"*).
+- Misconceptions are persisted in the agent's `detected_misconceptions` state list and fed into subsequent generation nodes so the tutor proactively dismantles them.
 
-### 5. LangGraph Stateful Agent with Memory Window
-- Maintains a conversational sliding memory window.
-- Persists cumulative student errors in `detected_misconceptions` to continually refine explanations across multi-turn interactions.
+### 5. Similarity Thresholding & Graceful Fallback
+- **Threshold ($\ge 0.32$):** Query is grounded directly in verified NCERT textbook chunks with page citations.
+- **Out-of-Syllabus ($\mathbf{< 0.32}$):** Activates **Autonomous Fallback Mode** via Groq AI without crashing, answering gracefully while maintaining scientific fidelity.
+
+---
+
+## 🏗️ System Architecture
+
+```
+                                  ┌───────────────────────────┐
+                                  │   React 19 + Vite UI     │
+                                  │ (KaTeX, Tailwind, Pills)  │
+                                  └─────────────┬─────────────┘
+                                                │ REST API (JSON)
+                                                ▼
+                                  ┌───────────────────────────┐
+                                  │   FastAPI Backend Server  │
+                                  │        (Port 8000)        │
+                                  └─────────────┬─────────────┘
+                                                │
+                 ┌──────────────────────────────┴──────────────────────────────┐
+                 ▼                                                             ▼
+     ┌───────────────────────┐                                     ┌───────────────────────┐
+     │  LangGraph Engine     │                                     │  ChromaDB Vector DB   │
+     │  Stateful Graph:      │                                     │  - 1,740 NCERT Chunks │
+     │  1. Assess Misconcept │ ──── Queries Cosine Distance ─────▶ │  - 384-dim Embeddings │
+     │  2. Retrieve Context  │                                     │  - HNSW Indexing      │
+     │  3. Adaptive Generate │ ◀─── Top-K Grounded Chunks ─────────│  - Page Citations     │
+     └───────────┬───────────┘                                     └───────────────────────┘
+                 │
+                 ▼
+     ┌───────────────────────┐
+     │   Groq LLM Engine     │
+     │ (openai/gpt-oss-120b) │ ──── Generates Levels 1, 2, 3 Concurrently ───▶ React Canvas
+     └───────────────────────┘
+```
 
 ---
 
 ## 📁 Repository Structure
+
 ```
 llm_project/
 ├── dataset/
-│   ├── physics/       # OpenStax High School Physics PDF
-│   ├── maths/         # OpenStax High School Statistics PDF
-│   └── biology/       # OpenStax Concepts of Biology PDF
-├── .env               # Groq API Key
-├── ingest.py          # PDF text extraction & vector indexing script
-├── openstax_index.pkl # Persistent pre-computed vector index
-├── tutor_agent.py     # LangGraph state machine, few-shot prompts & RAG
-├── app.py             # Streamlit interactive web application
-└── README.md          # Documentation and viva preparation guide
+│   ├── physics/        # NCERT Physics Complete PDF (Classes 11 & 12)
+│   ├── chemistry/      # NCERT Chemistry Complete PDF (Classes 11 & 12)
+│   └── maths/          # NCERT Mathematics Complete PDF (Classes 11 & 12)
+├── frontend/           # Modern React 19 Frontend
+│   ├── src/
+│   │   ├── App.jsx     # Main UI with Level Toggle Pills & LaTeX Rendering
+│   │   ├── App.css     # Notion/Linear minimal styling
+│   │   └── main.jsx    # Vite React entry point
+│   ├── package.json    # React, Lucide, KaTeX, Tailwind dependencies
+│   └── vite.config.js  # Vite dev server & proxy configuration
+├── chroma_db/          # Persistent ChromaDB vector database
+├── tutor_agent.py      # LangGraph state machine, few-shot prompts, & RAG node
+├── server.py           # FastAPI REST API with concurrent 3-level generation
+├── ingest.py           # PyMuPDF extraction & RecursiveCharacterTextSplitter
+├── run.bat             # One-click runner for both Backend & Frontend
+├── requirements.txt    # Python dependencies
+├── .env.example        # Environment variable template
+└── README.md           # Documentation & Viva Defence Guide
 ```
 
 ---
 
 ## 🏃 How to Run Locally
 
-### 1. Activate Conda Environment:
-```powershell
-conda activate langgraph_env
+### Prerequisites
+- Python 3.10 or 3.11 with Conda
+- Node.js (v18+)
+- A free Groq API key from [console.groq.com](https://console.groq.com)
+
+### 1. Environment Setup
+Create a `.env` file in the root directory:
+```env
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
-### 2. (Optional) Rebuild OpenStax Index:
+Install Python dependencies:
+```powershell
+conda activate langgraph_env
+pip install -r requirements.txt
+```
+
+Install Frontend dependencies:
+```powershell
+cd frontend
+npm install
+cd ..
+```
+
+---
+
+### 2. (Optional) Rebuild the NCERT Vector Database
+To re-index the textbooks from scratch:
 ```powershell
 python ingest.py
 ```
 
-### 3. Launch Streamlit Web Application:
+---
+
+### 3. Launch the Application (One-Click)
+
+Simply double-click **`run.bat`** (or execute from terminal):
 ```powershell
-streamlit run app.py
+.\run.bat
 ```
-Open your browser at: **`http://localhost:8501`**
+This concurrently starts:
+* **FastAPI Backend:** `http://127.0.0.1:8000`
+* **Vite React UI:** `http://localhost:5173`
+
+Open your browser at **`http://localhost:5173`**.
 
 ---
 
-## 🎓 Viva / Presentation Guide (Key AI Questions)
+## 🎓 Viva & Presentation Defense Guide (Key Technical Questions)
 
 | Question Examiner Might Ask | Technical Answer to Give |
 | :--- | :--- |
-| **Why not just use standard ChatGPT?** | Standard LLMs are one-size-fits-all and hallucinate. EduPath uses **few-shot pedagogical exemplars** to enforce 3 calibrated levels, grounds facts in **OpenStax peer-reviewed curriculum**, and tracks misconceptions over multi-turn dialogues via **LangGraph**. |
-| **Why did you use LangGraph?** | LangGraph provides an explicit state machine (`TutorState`) with sequential nodes (`Assess` ➔ `Retrieve` ➔ `Generate`). It maintains multi-turn memory and tracks student misconception states across turns. |
-| **How does Fallback work?** | We enforce a similarity threshold ($0.15$). If an inquiry has a low cosine score, EduPath flags `is_fallback = True`, generating transparent general AI answers while noting the source. |
-| **Which OpenStax books did you choose?** | Because SDG 4 specifically targets *underserved schools*, university-level calculus or tensor physics would be inappropriate. We specifically grounded our agent in **OpenStax High School Physics, High School Statistics, and Concepts of Biology**. |
+| **Why not just use standard ChatGPT?** | General LLMs are one-size-fits-all and hallucinate outside their training distribution. EduPath uses **few-shot pedagogical exemplars** to enforce 3 calibrated cognitive tiers, grounds factual statements directly in official **NCERT curriculum**, and tracks student misconceptions across turns via **LangGraph**. |
+| **Why did you switch to NCERT over OpenStax?** | For Indian education and university evaluation, NCERT is the national gold standard across CBSE, State Boards, JEE, and NEET. Grounding in NCERT ensures SI unit consistency, standard Indian textbook definitions, and relatable citations for Indian students and evaluators. |
+| **Why LangGraph over basic LangChain chains?** | LangChain chains are unidirectional DAGs. LangGraph provides an explicit cyclic state machine (`TutorState`) with sequential nodes (`Assess` ➔ `Retrieve` ➔ `Generate`), enabling persistent misconception tracking and dynamic adaptation based on conversational memory. |
+| **Why RecursiveCharacterTextSplitter?** | Naive character splitting cuts words or formulas in half. `RecursiveCharacterTextSplitter` respects natural grammatical boundaries hierarchically (paragraphs `\n\n` $\to$ lines `\n` $\to$ sentences `. ` $\to$ words), preserving complete semantic thoughts for dense neural encoding. |
+| **How does misconception remediation work?** | In the `Assess` node, a fast LLM pass scans the student's question against common pedagogical misconceptions. If detected, the fallacy is logged to `detected_misconceptions` and injected into the prompt so the tutor directly unteaches the error. |
+| **Why FastAPI + React instead of Streamlit?** | Streamlit re-runs the entire Python script on every user interaction, causing screen flashes, cold starts, and poor layout control. Our decoupled architecture pairs a high-performance **FastAPI backend** (concurrent 3-level generation) with a modern **React 19 single-page canvas** featuring instant zero-latency pill switching and native KaTeX rendering. |
+| **How does Fallback Mode prevent hallucination?** | We enforce a cosine similarity threshold of $0.32$. If a query falls outside the indexed NCERT syllabus, the system transparently flags `is_fallback = True` and signals this to the student, ensuring no ungrounded claims are disguised as textbook facts. |
+
+---
+
+## 📜 Course & Competition Credentials
+* **Project:** EduPath — Personalized Tutoring Agent
+* **Course:** CSE 473 — Artificial Intelligence
+* **Theme:** Google Solution Challenge | UN Sustainable Development Goal 4 (Quality Education)
