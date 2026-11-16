@@ -67,35 +67,35 @@ def get_subjects():
         "subjects": [
             {
                 "id": "physics",
-                "name": "High School Physics",
+                "name": "NCERT Physics (Class 11 & 12)",
                 "icon": "Atom",
-                "badge": "OpenStax High School Physics",
+                "badge": "NCERT Physics (Classes XI & XII)",
                 "sample_questions": [
                     "Why do heavier objects fall at the same speed as light objects in a vacuum?",
                     "If a horse pulls on a cart, why does the cart move if action and reaction forces are equal?",
-                    "I don't understand inertia, can you explain it simply?"
+                    "What is the difference between acceleration and gravity according to NCERT?"
+                ]
+            },
+            {
+                "id": "chemistry",
+                "name": "NCERT Chemistry (Class 11 & 12)",
+                "icon": "FlaskConical",
+                "badge": "NCERT Chemistry (Classes XI & XII)",
+                "sample_questions": [
+                    "Why does ice float on water? Explain via hydrogen bonding.",
+                    "What is the difference between molarity and molality, and which is temperature independent?",
+                    "Explain Le Chatelier's principle with an intuitive analogy."
                 ]
             },
             {
                 "id": "maths",
-                "name": "High School Statistics & Maths",
+                "name": "NCERT Mathematics (Class 11 & 12)",
                 "icon": "Sigma",
-                "badge": "OpenStax High School Statistics",
+                "badge": "NCERT Mathematics (Classes XI & XII)",
                 "sample_questions": [
-                    "Why is 5 - (-3) = 8? Doesn't subtracting make things smaller?",
                     "What is standard deviation and what does it tell us about data?",
-                    "If a coin lands on heads 5 times in a row, is tails guaranteed next?"
-                ]
-            },
-            {
-                "id": "biology",
-                "name": "Concepts of Biology",
-                "icon": "Dna",
-                "badge": "OpenStax Concepts of Biology",
-                "sample_questions": [
-                    "Do plants perform respiration or only photosynthesis?",
-                    "Why are mitochondria called the powerhouses of the cell?",
-                    "What is the main difference between prokaryotic and eukaryotic cells?"
+                    "Can the probability of an event ever be greater than 1 or negative?",
+                    "Why is dividing by zero undefined in mathematics?"
                 ]
             }
         ]

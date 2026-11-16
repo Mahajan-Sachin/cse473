@@ -197,7 +197,7 @@ def retrieve_context_node(state: TutorState) -> Dict[str, Any]:
         citations = []
         for r in results:
             c = r["chunk"]
-            context_texts.append(f"[OpenStax {c['source']} | Page {c['page']}]\n{c['text']}")
+            context_texts.append(f"[NCERT {c['source']} | Page {c['page']}]\n{c['text']}")
             citations.append({
                 "source": c["source"],
                 "page": c["page"],
@@ -225,7 +225,7 @@ def retrieve_context_node(state: TutorState) -> Dict[str, Any]:
 def generate_adaptive_response_node(state: TutorState) -> Dict[str, Any]:
     """
     Node 3: Generates the pedagogical response using few-shot exemplars,
-    calibrated to current_level and grounded in OpenStax context (or fallback).
+    calibrated to current_level and grounded in NCERT context (or fallback).
     """
     client = get_groq_client()
     messages = state.get("messages", [])
@@ -238,14 +238,14 @@ def generate_adaptive_response_node(state: TutorState) -> Dict[str, Any]:
     # Grounding instructions
     if is_fallback or not retrieved_context:
         grounding_instruction = """
-[FALLBACK MODE - GENERAL AI KNOWLEDGE]
-The student asked a query outside current OpenStax chapter boundaries.
-Provide a pedagogically sound explanation using general scientific knowledge, maintaining accuracy.
+[FALLBACK MODE - GENERAL SCIENTIFIC KNOWLEDGE]
+The student asked a query outside the indexed NCERT chapters.
+Provide a pedagogically sound explanation using standard NCERT scientific principles and terminology.
 """
     else:
         grounding_instruction = f"""
-[OPENSTAX GROUNDED KNOWLEDGE BASE]
-Strictly ground definitions, terminology, and core facts on the verified OpenStax textbook material below:
+[NCERT GROUNDED KNOWLEDGE BASE]
+Strictly ground definitions, terminology, and core facts on the verified NCERT Class 11 & 12 textbook material below:
 {retrieved_context}
 """
 

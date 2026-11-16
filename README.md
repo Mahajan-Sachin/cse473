@@ -7,7 +7,7 @@
 ## 📌 Project Overview
 In underserved and resource-constrained schools, high student-to-teacher ratios (often 40:1 or worse) prevent educators from diagnosing individual student misconceptions or pacing instruction. 
 
-**EduPath** is a stateful AI tutoring agent built with **LangGraph**, **Groq LLM (`openai/gpt-oss-120b`)**, and **OpenStax High School Textbooks**. It dynamically diagnoses student misunderstandings and adapts its pedagogical explanation style across **3 difficulty levels** using **few-shot in-context learning**.
+**EduPath** is a stateful AI tutoring agent built with **LangGraph**, **Groq LLM (`openai/gpt-oss-120b`)**, and **official NCERT Class 11 & 12 Textbooks**. It dynamically diagnoses student misunderstandings and adapts its pedagogical explanation style across **3 difficulty levels** using **few-shot in-context learning**.
 
 ---
 
@@ -22,23 +22,19 @@ In underserved and resource-constrained schools, high student-to-teacher ratios 
 
 ### 2. Multi-Level Pedagogical Adaptation (Core Deliverable)
 - **Level 1 (Foundational / Intuitive):** For struggling or underserved students. Employs vivid everyday physical analogies (e.g., skateboards, ice rinks, debt/allowance) and eliminates intimidating mathematical jargon.
-- **Level 2 (Conceptual & Guided):** Standard High School grade 9/10 level. Structured textbook explanations, standard formulas, and step-by-step problem-solving.
-- **Level 3 (Socratic & Critical Inquiry):** For advanced / AP-prep students. Uses Socratic questioning, boundary-condition tests ("what happens if friction is zero?"), and thought experiments without spoon-feeding answers.
+- **Level 2 (Conceptual & Guided):** Standard Class 11/12 NCERT curriculum level. Structured textbook explanations, standard formulas, and step-by-step problem-solving.
+- **Level 3 (Socratic & Critical Inquiry):** For advanced / competitive exam prep (JEE/NEET). Uses Socratic questioning, boundary-condition tests ("what happens if friction is zero?"), and thought experiments without spoon-feeding answers.
 
-### 2. Multi-Level Comparison Showcase Matrix
-- Enter any concept or student error (e.g., *Newton's Third Law*, *Standard Deviation*, *Photosynthesis vs Respiration*).
-- Directly generates and displays **Level 1, Level 2, and Level 3 explanations side-by-side**.
-
-### 3. OpenStax Textbook Grounding & Dense Neural RAG
-- Indexed over **1,690+ semantic chunks** from official OpenStax High School textbooks:
-  - ⚛️ *OpenStax High School Physics* (587 chunks)
-  - 📐 *OpenStax High School Statistics / Maths* (508 chunks)
-  - 🧬 *OpenStax Concepts of Biology* (599 chunks)
+### 3. NCERT Textbook Grounding & Dense Neural RAG
+- Indexed over **1,740+ semantic chunks** from official NCERT Class 11 & 12 textbooks using `RecursiveCharacterTextSplitter`:
+  - ⚛️ *NCERT Physics (Classes XI & XII)* (692 chunks)
+  - 🧪 *NCERT Chemistry (Classes XI & XII)* (684 chunks)
+  - 📐 *NCERT Mathematics (Classes XI & XII)* (364 chunks)
 - **SentenceTransformers (`all-MiniLM-L6-v2`)**: Maps text chunks into a **384-dimensional dense semantic vector space**.
 - Normalized Cosine Distance with verified page citations.
 
 ### 4. Similarity Thresholding & Graceful Fallback
-- If cosine similarity $\ge 0.32$: Responses are strictly grounded in OpenStax with page citations.
+- If cosine similarity $\ge 0.32$: Responses are strictly grounded in NCERT with page citations.
 - If similarity $< 0.32$ (out-of-syllabus query): Transparently activates **Autonomous Fallback Mode** via Groq AI without crashing.
 
 ### 5. LangGraph Stateful Agent with Memory Window

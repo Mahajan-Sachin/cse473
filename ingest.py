@@ -88,6 +88,7 @@ def build_index():
     
     subject_dirs = {
         "physics": os.path.join(DATASET_DIR, "physics"),
+        "chemistry": os.path.join(DATASET_DIR, "chemistry"),
         "maths": os.path.join(DATASET_DIR, "maths"),
         "biology": os.path.join(DATASET_DIR, "biology")
     }

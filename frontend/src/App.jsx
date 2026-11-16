@@ -13,6 +13,7 @@ import {
   CheckCircle2, 
   Atom, 
   Sigma, 
+  FlaskConical,
   Dna, 
   Info, 
   ChevronRight, 
@@ -25,36 +26,36 @@ import {
 
 const SUBJECT_CONFIG = {
   physics: {
-    name: "High School Physics",
-    book: "OpenStax High School Physics",
+    name: "NCERT Physics (Class 11 & 12)",
+    book: "NCERT Physics (Classes XI & XII)",
     icon: Atom,
     color: "blue",
     sampleQuestions: [
       "Why do heavier things fall at the same speed as light things in a vacuum?",
       "If a cart pulls back on a horse with equal force, why does the cart move at all?",
-      "I don't understand inertia, can you explain it with an easy analogy?"
+      "What is the difference between acceleration and gravity according to NCERT?"
+    ]
+  },
+  chemistry: {
+    name: "NCERT Chemistry (Class 11 & 12)",
+    book: "NCERT Chemistry (Classes XI & XII)",
+    icon: FlaskConical,
+    color: "purple",
+    sampleQuestions: [
+      "Why does ice float on water? Explain via hydrogen bonding.",
+      "What is the difference between molarity and molality, and which is temperature independent?",
+      "Explain Le Chatelier's principle with an intuitive analogy."
     ]
   },
   maths: {
-    name: "Statistics & Algebra",
-    book: "OpenStax High School Statistics",
+    name: "NCERT Mathematics (Class 11 & 12)",
+    book: "NCERT Mathematics (Classes XI & XII)",
     icon: Sigma,
     color: "emerald",
     sampleQuestions: [
-      "Why is 5 - (-3) = 8? Doesn't subtracting make a number smaller?",
-      "What is standard deviation and how does it help us understand data?",
-      "If a coin lands on heads 5 times in a row, is tails guaranteed next?"
-    ]
-  },
-  biology: {
-    name: "Concepts of Biology",
-    book: "OpenStax Concepts of Biology",
-    icon: Dna,
-    color: "purple",
-    sampleQuestions: [
-      "Do plants perform respiration or only photosynthesis?",
-      "Why are mitochondria called the powerhouses of the cell?",
-      "What is the difference between prokaryote and eukaryote cells?"
+      "What is standard deviation and how does it measure dispersion?",
+      "Can the probability of an event ever be greater than 1 or negative?",
+      "Why is dividing by zero undefined in mathematics?"
     ]
   }
 };
@@ -388,7 +389,7 @@ export default function App() {
               Verified Knowledge Base
             </div>
             <div className="text-[11px] text-slate-600 leading-normal">
-              Grounded in <span className="font-medium text-slate-800">{currentSubjectMeta.book}</span> with persistent ChromaDB dense vector indexing (1,694 chunks).
+              Grounded in <span className="font-medium text-slate-800">{currentSubjectMeta.book}</span> with persistent ChromaDB dense vector indexing.
             </div>
           </div>
 
@@ -627,7 +628,7 @@ export default function App() {
             </button>
           </div>
           <div className="text-center text-[11px] text-slate-500 mt-2">
-            EduPath adapts explanation depth using few-shot in-context learning grounded in OpenStax open textbooks.
+            EduPath adapts explanation depth using few-shot in-context learning grounded in official NCERT textbooks.
           </div>
         </div>
 
@@ -661,7 +662,7 @@ export default function App() {
               <div>
                 <h4 className="font-bold text-slate-900 mb-1">1. Two-Stage RAG Pipeline with ChromaDB</h4>
                 <ul className="list-disc pl-4 space-y-1 text-slate-600">
-                  <li><strong>Dense Embeddings:</strong> <code>sentence-transformers/all-MiniLM-L6-v2</code> maps 1,694 OpenStax chunks to a 384-dimensional dense semantic space.</li>
+                  <li><strong>Dense Embeddings:</strong> <code>sentence-transformers/all-MiniLM-L6-v2</code> maps NCERT textbook chunks to a 384-dimensional dense semantic space.</li>
                   <li><strong>Vector Store:</strong> Persistent ChromaDB database with HNSW Cosine Distance indexing.</li>
                   <li><strong>Confidence Threshold (0.32):</strong> If semantic match is below 0.32, triggers autonomous fallback to prevent hallucinations.</li>
                 </ul>
